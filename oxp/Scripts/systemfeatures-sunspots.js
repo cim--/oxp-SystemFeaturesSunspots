@@ -9,7 +9,7 @@ this.startUp = function() {
 this.systemWillPopulate = function() {
 	system.setPopulator("system_features_sunspots",
 						{
-							callback: this._addSunspots,
+							callback: this._addSunspots.bind(this),
 							priority: 1000,
 							coordinates: system.sun.position
 						});
