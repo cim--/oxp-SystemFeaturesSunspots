@@ -1,0 +1,12 @@
+{
+	"identifier" = "oolite.oxp.cim.systemfeatures.sunspots";
+	"required_oolite_version" = "1.79";
+	"title" = "System Features: Sunspots";
+	"version" = "1.0";
+	"category" = "Activities";
+	"description" = "Adds occasional sunspots to stars. Requires a shader-capable graphics card.";
+	"download_url" = "http://compsoc.dur.ac.uk/~cim/oolite/System_Features_Sunspots.1.4.oxz";
+	"author" = "cim";
+	"information_url" = "http://wiki.alioth.net/index.php/System_Features_Sunspots";
+	"license" = "CC-BY-SA 3.0";
+}

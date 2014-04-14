@@ -1,0 +1,99 @@
+uniform float       time;
+uniform vec4				shapeX;
+uniform vec4				shapeY;
+uniform float       innerR;
+uniform float       outerR;
+
+vec3 RGBtoHSV(vec3 rgb) {
+	float minc, maxc, delta;
+	vec3 hsv = vec3(0.0,0.0,0.0);
+
+	minc = min(min(rgb.r,rgb.g),rgb.b);
+	maxc = max(max(rgb.r,rgb.g),rgb.b);
+	hsv.b = maxc;
+
+	delta = maxc - minc;
+	if (maxc == minc) {
+		hsv.g = 0.0;
+	} else if (maxc + minc <= 1.0) {
+		hsv.g = delta / (maxc+minc);
+	} else {
+		hsv.g = delta / (2.0 - (maxc+minc));
+	}
+
+	if (rgb.r == maxc) {
+		hsv.r = (rgb.g - rgb.b) / delta;
+	} else if (rgb.g == maxc) {
+		hsv.r = 2.0 + (rgb.b - rgb.r) / delta;
+	} else {
+		hsv.r = 4.0 + ( rgb.r - rgb.g ) / delta;
+	}
+	hsv.r *= 60.0;
+	if (hsv.r < 0.0) {
+		hsv.r += 360.0;
+	}
+	return hsv;
+}
+
+vec3 HSVtoRGB(vec3 hsv) {
+	int i;
+	float f, p, q, t;
+
+	if (hsv.g == 0.0) {
+		return vec3(hsv.b,hsv.b,hsv.b);
+	}
+
+	hsv.r /= 60.0;
+	i = int(floor(hsv.r));
+	f = hsv.r - float(i);			
+	p = hsv.b * (1.0 - hsv.g);
+	q = hsv.b * (1.0 - hsv.g * f);
+	t = hsv.b * (1.0 - hsv.g * (1.0 - f));
+
+	if (i==0) {
+			return vec3(hsv.b,t,p);
+	} else if (i==1) {
+			return vec3(q,hsv.b,p);
+	} else if (i==2) {
+			return vec3(p,hsv.b,t);
+	} else if (i==3) {
+			return vec3(p,q,hsv.b);
+	} else if (i==4) {
+			return vec3(t,p,hsv.b);
+	} else if (i==5) {
+			return vec3(hsv.b,p,q);
+	}
+}
+
+
+void main(void) {
+/* Feeding in random numbers to this algorithm doesn't give great sunspots
+ * though manually tuning can give some nicer ones. A proper sunspot-generating
+ * fragment shader is not the point of this demonstration, however. Also, I 
+ * don't actually have one of those... */
+
+	float x = gl_TexCoord[0].s;
+	float y = gl_TexCoord[0].t;
+	float r2 = ((0.5 - x)*(0.5 - x)) + ((0.5 - y)*(0.5 - y));
+
+	r2 += sin((shapeX.r+cos(time/shapeX.b))*x)/shapeX.g;
+	r2 += sin((shapeY.r+cos(time/shapeY.b))*y)/shapeY.g;
+
+
+	float fade = 0.0;
+	if (r2 > innerR) { // inner radius
+		fade = (r2-innerR)/(outerR-innerR);
+	}
+	if (fade > 1.0) {
+		discard;
+	} else {
+		// convert from light color to solar disc color
+		vec3 sunColor = gl_LightSource[1].specular.rgb;
+		// FIXME: not preserving hue properly!
+		vec3 hsvColor = RGBtoHSV(sunColor);
+		hsvColor.g = hsvColor.g / 3.0;
+		hsvColor.b = fade;
+		sunColor = HSVtoRGB(hsvColor);
+		gl_FragColor = vec4(sunColor, 1.0); 
+	}
+}

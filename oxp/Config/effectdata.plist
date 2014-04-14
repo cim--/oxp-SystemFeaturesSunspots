@@ -1,0 +1,22 @@
+{
+		"systemfeatures_sunspot" = {
+		    "model" = "systemfeatures_sunspot.dat";
+				"materials" = {
+						"systemfeatures-sunspot.png" = {
+								"diffuse_map" = "systemfeatures-sunspot.png";
+								"vertex_shader" = "systemfeatures-sunspot.vertex";
+								"fragment_shader" = "systemfeatures-sunspot.fragment";
+								"uniforms" = { 
+										"time" = "timeElapsedSinceSpawn"; 
+/* Visual effects don't have many intrinsic properties. A few
+   arbitrary parameters may be passed to the shader. */
+										"shapeX" = "shaderVector1";
+										"shapeY" = "shaderVector2";
+										"outerR" = "shaderFloat1";
+										"innerR" = "shaderFloat2";
+								};
+						};
+				};
+				"smooth" = 1;
+		};
+}
